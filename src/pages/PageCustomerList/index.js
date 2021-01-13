@@ -1,0 +1,1 @@
+export { PageCustomerList } from './PageCustomerList'

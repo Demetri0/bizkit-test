@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
-
-import { DefaultLayout } from './layouts/DefaultLayout'
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 
 import { UserContext } from './core/UserContext'
 import { getMe } from './core/api/user/me'
 
-import logo from './logo.svg';
-import './App.css';
+import { DefaultLayout } from './layouts/DefaultLayout'
+
+import { PageLogin } from './pages/PageLogin/PageLogin'
+import { PageCustomerList } from './pages/PageCustomerList'
+
+import './App.css'
 
 function App() {
   const [user, setUser] = useState(null)
@@ -19,27 +22,29 @@ function App() {
       .catch(console.error)
   },[])
 
-  return (
-    <UserContext.Provider value={[user, setUser]}>
+  let body = null
+  if (!user) {
+    body = (
+      <PageLogin />
+    )
+  } else {
+    body = (
       <DefaultLayout>
-        <div className="App">
-          <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-              Edit <code>src/App.js</code> and save to reload.
-            </p>
-            <a
-              className="App-link"
-              href="https://reactjs.org"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn React
-            </a>
-          </header>
-        </div>
+        <Switch>
+          <Route exact path='/'>
+            <PageCustomerList />
+          </Route>
+        </Switch>
       </DefaultLayout>
-    </UserContext.Provider>
+    )
+  }
+
+  return (
+    <Router>
+      <UserContext.Provider value={[user, setUser]}>
+        {body}
+      </UserContext.Provider>
+    </Router>
   );
 }
 
