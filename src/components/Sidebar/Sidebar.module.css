@@ -1,0 +1,14 @@
+.Drawer {
+    width: 240px;
+    flex-shrink: 0;
+}
+
+.Drawer__paper {
+    width: 240px;
+}
+.Drawer__header {
+    height: 100px;
+    background-image: url('../../bizkit.svg');
+    background-repeat: no-repeat;
+    background-position: center;
+}
