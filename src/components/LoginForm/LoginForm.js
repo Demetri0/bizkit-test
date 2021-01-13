@@ -12,8 +12,7 @@ import {
     InputAdornment,
     IconButton,
 } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/core/styles'
+import MuiAlert from '@material-ui/lab/Alert'
 
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
@@ -27,29 +26,12 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-const useStyles = makeStyles((theme) => ({
-    root: {
-        display: 'flex',
-        flexWrap: 'wrap',
-    },
-    margin: {
-        margin: theme.spacing(1),
-    },
-    withoutLabel: {
-        marginTop: theme.spacing(3),
-    },
-    textField: {
-        width: '25ch',
-    },
-}));
-
 export function LoginForm() {
-    const classes = useStyles();
     const [open, setOpen] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('testkit1301@mail.ru')
     const [password, setPassword] = useState('class456')
-    const [user, setUser] = useContext(UserContext)
+    const [, setUser] = useContext(UserContext)
     function handleSubmit(e){
         e.preventDefault()
         createToken({email, password})
@@ -97,7 +79,7 @@ export function LoginForm() {
                 </Box>
                 <Box marginTop={1}>
                     <FormControl variant="outlined" margin="dense">
-                        <InputLabel htmlFor="outlined-adornment-password">Пароль</InputLabel>
+                        <InputLabel shrink htmlFor="outlined-adornment-password">Пароль</InputLabel>
                         <OutlinedInput
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
@@ -120,14 +102,6 @@ export function LoginForm() {
                             labelWidth={70}
                         />
                     </FormControl>
-                    {/* <TextField
-                        margin="dense"
-                        type="password"
-                        label="Пароль"
-                        variant="outlined"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                    /> */}
                 </Box>
                 <Box marginTop={2} display="flex" justifyContent="flex-end">
                     <Button variant="contained" color="primary" type="submit">
