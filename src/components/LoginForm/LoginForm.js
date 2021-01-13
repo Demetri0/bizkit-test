@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import {
     Paper,
     Box,
@@ -17,48 +17,29 @@ import MuiAlert from '@material-ui/lab/Alert'
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
 
-import { createToken } from '../../core/api/token/createToken'
-import { getMe } from '../../core/api/user/me'
-import { UserContext } from '../../core/UserContext'
-
-
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export function LoginForm() {
+export function LoginForm({ login }) {
     const [open, setOpen] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('testkit1301@mail.ru')
     const [password, setPassword] = useState('class456')
-    const [, setUser] = useContext(UserContext)
     function handleSubmit(e){
         e.preventDefault()
-        createToken({email, password})
-            .then(({ data }) => {
-                if (data.access) {
-                    localStorage.setItem('token/access', data.access)
-                } else {
-                    throw data
-                }
-            })
-            .then(getMe)
-            .then(({ data }) => {
-                setUser(data)
-            })
-            .catch(err => {
-                setOpen(true)
-            })
-        return false;
+        login({email, password}).catch(err => {
+            setOpen(true)
+        })
     }
     function handleClose() {
         setOpen(false)
     }
     function handleClickShowPassword() {
-        setShowPassword(!showPassword);
+        setShowPassword(!showPassword)
     }
     function handleMouseDownPassword(event) {
-        event.preventDefault();
+        event.preventDefault()
     };
 
     return <Paper elevation={3}>

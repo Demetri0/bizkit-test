@@ -2,8 +2,8 @@ import { LoginForm } from '../../components/LoginForm'
 
 import styles from './PageLogin.module.css'
 
-export function PageLogin() {
+export function PageLogin({ login }) {
     return <div className={styles.PageLogin}>
-        <LoginForm />
+        <LoginForm login={login} />
     </div>
 }

@@ -6,12 +6,13 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@material-ui/core'
+import { Link } from 'react-router-dom'
 import MUIAssignment from '@material-ui/icons/Assignment'
 import MUIExitToApp from '@material-ui/icons/ExitToApp'
 
 import styles from './Sidebar.module.css'
 
-export function Sidebar() {
+export function Sidebar({ logout }) {
   return (
     <Drawer
       className={styles.Drawer}
@@ -24,13 +25,13 @@ export function Sidebar() {
       <div className={styles.Drawer__header} />
       <Divider />
       <List>
-        <ListItem button>
+        <ListItem button component={Link} to='/'>
           <ListItemIcon>
             <MUIAssignment />
           </ListItemIcon>
           <ListItemText primary='Клиенты' />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={logout}>
           <ListItemIcon>
             <MUIExitToApp />
           </ListItemIcon>

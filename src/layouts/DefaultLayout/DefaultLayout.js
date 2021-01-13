@@ -1,8 +1,10 @@
 import { Sidebar } from '../../components/Sidebar'
 
-export function DefaultLayout({ children }) {
-    return <div>
-        <Sidebar />
+import styles from './DefaultLayout.module.css'
+
+export function DefaultLayout({ logout, children }) {
+    return <div className={styles.DefaultLayout}>
+        <Sidebar logout={logout} />
         {children}
     </div>
 }
