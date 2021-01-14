@@ -30,17 +30,23 @@ import MUIReplay from '@material-ui/icons/Replay'
 import { Alert } from '../../components/Alert'
 
 import { getCompanies } from '../../core/api/companies/getCompanies'
+import { deleteCompany } from '../../core/api/companies/deleteCompany'
 
 import styles from './PageCustomerList.module.css'
 
 const defaultFilter = {
-    name: '',
-    type: '',
-    region: '',
-    city: '',
-  }
+  name: '',
+  type: '',
+  region: '',
+  city: '',
+}
+const defaultAlert = {
+  open: false,
+  type: 'default',
+  message: '',
+}
 export function PageCustomerList() {
-  const [open, setOpen] = useState(false)
+  const [alert, setAlert] = useState({...defaultAlert})
   const [rowsPerPage, setRowsPerPage] = useState(10)
   const [totalClients, setTotalClients] = useState(0)
   const [clients, setClients] = useState([])
@@ -54,20 +60,32 @@ export function PageCustomerList() {
     setPage(0)
   }
   function handleClose() {
-    setOpen(false)
+    setAlert({...defaultAlert})
+  }
+  function handleDelete(id) {
+    return () => {
+      deleteCompany(id)
+        .then(({ data }) => {
+          setClients([...clients].filter(c => c.id !== id))
+          setAlert({open: true, type: 'success', message: 'Клиент успешно удалён'})
+        })
+        .catch(() => {
+          setAlert({open: true, type: 'error', message: 'Не удалось удалить клиента'})
+        })
+    }
   }
   useEffect(() => {
     getCompanies({ page: 1 }) // Just because API isn't support filtration
       .then(({ data }) => {
         console.log(data)
         if (!data.results) {
-          setOpen(true)
+          setAlert({open: true, type: 'error', message: 'Не удалось загрузить список компаний'})
         }
         setClients(data.results)
         setTotalClients(data.count)
       })
       .catch(({ data }) => {
-        setOpen(true)
+        setAlert({open: true, type: 'error', message: 'Не удалось загрузить список компаний'})
       })
   }, [])
   const regions = useMemo(() => {
@@ -153,7 +171,7 @@ export function PageCustomerList() {
                 <TableCell>{item.city || 'N/A'}</TableCell>
                 <TableCell width='10%' align="right">
                   <IconButton><MUIEdit/></IconButton>
-                  <IconButton><MUIDelete/></IconButton>
+                  <IconButton onClick={handleDelete(item.id)}><MUIDelete/></IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -179,9 +197,9 @@ export function PageCustomerList() {
 
     </Paper>
 
-    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-      <Alert onClose={handleClose} severity="error">
-        Ошибка загрузки данных
+    <Snackbar open={alert.open} autoHideDuration={6000} onClose={handleClose}>
+      <Alert onClose={handleClose} severity={alert.type}>
+        {alert.message}
       </Alert>
     </Snackbar>
   </>
