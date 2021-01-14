@@ -19,11 +19,16 @@ import {
 } from '@material-ui/core'
 
 import MUIMenu from '@material-ui/icons/Menu'
+import MaterialTable from 'material-table'
 
 import { Alert } from '../../components/Alert'
 
 import { getCompanyById } from '../../core/api/companies/getCompanyById'
 import { patchCompany } from '../../core/api/companies/patchCompany'
+import { getBankDetails } from '../../core/api/companies/bank-details/getBankDetails'
+import { createBankDetails } from '../../core/api/companies/bank-details/createBankDetails'
+import { deleteBankDetails } from '../../core/api/companies/bank-details/deleteBankDetails'
+import { patchBankDetails } from '../../core/api/companies/bank-details/patchBankDetails'
 
 import styles from './PageCustomerEdit.module.css'
 
@@ -125,6 +130,25 @@ export function PageCustomerEdit() {
         }
       })
   }
+
+  const columns = [
+    { title: 'Банк', field: 'bank' },
+    { title: 'БИК', field: 'bank_id_code' },
+    { title: 'Номер счёта', field: 'account_number' },
+    { title: 'Валюта', field: 'currency' },
+  ]
+
+  const [details, setDetails] = useState([])
+
+  useEffect(() => {
+    getBankDetails({ companyId: id })
+      .then(({ data }) => {
+        setDetails(data.results)
+      })
+      .catch(error => {
+        setAlert({open: true, type: 'error', message: 'Не удалось загрузить банковские реквизиты'})
+      })
+  }, [id])
 
   return <>
     <AppBar color='inherit' position="static" className={styles.Root}>
@@ -362,7 +386,66 @@ export function PageCustomerEdit() {
           </form>
         </TabPanel>
         <TabPanel value={tab} index={1}>
-          teststs
+          <MaterialTable
+            title="Банковские реквизиты компании"
+            columns={columns}
+            data={details}
+            localization={{
+              pagination: {
+                labelDisplayedRows: '{from}-{to} из {count}'
+              },
+              toolbar: {
+                nRowsSelected: '{0} строк выбрано'
+              },
+              header: {
+                actions: 'Действия'
+              },
+              body: {
+                emptyDataSourceMessage: 'Нет данных для отображения',
+                filterRow: {
+                  filterTooltip: 'Фильтр'
+                }
+              }
+            }}
+            editable={{
+              onRowAdd: newData => {
+                return createBankDetails(id, newData)
+                  .then(({ data }) => {
+                    setDetails([...details, newData])
+                    setAlert({open: true, type: 'success', message: 'Успешно добавлено'})
+                  })
+                  .catch(error => {
+                    setAlert({open: true, type: 'error', message: 'Во время добавления произошла ошибка'})
+                  })
+              },
+              onRowUpdate: (newData, oldData) => {
+                console.log(oldData, newData)
+                return patchBankDetails(id, oldData.id, newData)
+                  .then(({ data }) => {
+                    setDetails(details.map(d => {
+                      if (d.id !== oldData.id) {
+                        return d
+                      }
+                      return newData
+                    }))
+                    setAlert({open: true, type: 'success', message: 'Успешно обновлено'})
+                  })
+                  .catch(error => {
+                    setAlert({open: true, type: 'error', message: 'Во время обновления произошла ошибка'})
+                  })
+              },
+              onRowDelete: oldData => {
+                return deleteBankDetails(id, oldData.id)
+                  .then(({ data }) => {
+                    setDetails(details.filter(d => d.id !== oldData.id))
+                    setAlert({open: true, type: 'success', message: 'Успешно удалено'})
+                  })
+                  .catch(error => {
+                    setAlert({open: true, type: 'error', message: 'Во время удаления произошла ошибка'})
+                  })
+              },
+            }}
+          />
         </TabPanel>
       </>}
     </Paper>
