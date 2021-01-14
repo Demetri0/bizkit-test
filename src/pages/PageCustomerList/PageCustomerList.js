@@ -32,6 +32,8 @@ import MUIEdit from '@material-ui/icons/Edit'
 import MUIDelete from '@material-ui/icons/Delete'
 import MUIReplay from '@material-ui/icons/Replay'
 
+import { Link } from 'react-router-dom'
+
 import { Alert } from '../../components/Alert'
 
 import { getCompanies } from '../../core/api/companies/getCompanies'
@@ -213,7 +215,7 @@ export function PageCustomerList() {
                 <TableCell>{item.region || 'N/A'}</TableCell>
                 <TableCell>{item.city || 'N/A'}</TableCell>
                 <TableCell width='10%' align="right">
-                  <IconButton onClick={handleEditItem(item.id)}><MUIEdit/></IconButton>
+                  <IconButton component={Link} to={`/company/${item.id}`}><MUIEdit/></IconButton>
                   <IconButton onClick={handleDelete(item.id)}><MUIDelete/></IconButton>
                 </TableCell>
               </TableRow>
@@ -294,10 +296,17 @@ function ClientEditDialog({ id, open, onClose }) {
         setAlert({open: true, type: 'success', message: 'Данные успешно сохранены'})
         setTimeout(() => {
           onClose(data, id)
-        }, 2500)
+        }, 1500)
       })
-      .catch((data) => {
-        setAlert({open: true, type: 'error', message: 'Не удалось сохранить данные'})
+      .catch(error => {
+        const data = error.response.data
+        if (data) {
+          console.log(data)
+          const key = Object.keys(data)[0]
+          setAlert({open: true, type: 'error', message: `[${key}] ${data[key]}`})
+        } else {
+          setAlert({open: true, type: 'error', message: 'Не удалось сохранить данные'})
+        }
       })
   }
   function handleChange(e) {
@@ -312,9 +321,9 @@ function ClientEditDialog({ id, open, onClose }) {
       {id !== ''? 'Редактирование клента' : 'Добавление клиента'}
     </DialogTitle>
     <DialogContent>
-      <form onSubmit={handleSubmit}>
+      <form id='customerForm' onSubmit={handleSubmit}>
         <Grid container spacing={3}>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.name}
@@ -326,7 +335,7 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.shortname}
@@ -338,7 +347,7 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.type}
@@ -350,7 +359,7 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.registered_type}
@@ -362,19 +371,19 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.region}
               onChange={handleChange}
-              name='reion'
+              name='region'
               label='Регион'
               margin='dense'
               variant='outlined'
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.city}
@@ -386,7 +395,7 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.email}
@@ -399,13 +408,14 @@ function ClientEditDialog({ id, open, onClose }) {
               fullWidth
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <TextField
               required
               value={data.phone}
               onChange={handleChange}
               name='phone'
               label='Телефон'
+              type='tel'
               margin='dense'
               variant='outlined'
               fullWidth
@@ -431,7 +441,7 @@ function ClientEditDialog({ id, open, onClose }) {
       <Button onClick={onClose} color="primary">
         Отменить
       </Button>
-      <Button onClick={handleSubmit} color="primary">
+      <Button type='submit' form='customerForm' color="primary">
         {id !== '' ? 'Сохранить' : 'Добавить'}
       </Button>
     </DialogActions>

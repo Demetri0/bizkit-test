@@ -1,0 +1,25 @@
+.Root {
+    flex-grow: 1;
+}
+.MenuButton {
+    margin-right: 20px;
+}
+.Title {
+    flex-grow: 1;
+}
+.Page {
+    margin: 40px;
+    padding: 20px;
+}
+.SaveButtonWrap {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.Loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: 25vh;
+}

@@ -9,6 +9,7 @@ import { DefaultLayout } from './layouts/DefaultLayout'
 
 import { PageLogin } from './pages/PageLogin/PageLogin'
 import { PageCustomerList } from './pages/PageCustomerList'
+import { PageCustomerEdit } from './pages/PageCustomerEdit'
 
 import './App.css'
 
@@ -59,6 +60,9 @@ function App() {
         <Switch>
           <Route exact path='/'>
             <PageCustomerList />
+          </Route>
+          <Route path='/company/:id'>
+            <PageCustomerEdit />
           </Route>
         </Switch>
       </DefaultLayout>
