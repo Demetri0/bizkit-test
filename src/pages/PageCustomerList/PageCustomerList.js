@@ -29,7 +29,7 @@ import MUIReplay from '@material-ui/icons/Replay'
 
 import { Alert } from '../../components/Alert'
 
-import { getClients } from '../../core/api/clients/getClients'
+import { getCompanies } from '../../core/api/companies/getCompanies'
 
 import styles from './PageCustomerList.module.css'
 
@@ -41,6 +41,7 @@ const defaultFilter = {
   }
 export function PageCustomerList() {
   const [open, setOpen] = useState(false)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
   const [totalClients, setTotalClients] = useState(0)
   const [clients, setClients] = useState([])
   const [filter, setFilter] = useState({...defaultFilter})
@@ -48,11 +49,15 @@ export function PageCustomerList() {
   function handleChangePage(event, newPage) {
     setPage(newPage);
   }
+  function handleChangeRowsPerPage(event) {
+    setRowsPerPage(parseInt(event.target.value, 10))
+    setPage(0)
+  }
   function handleClose() {
     setOpen(false)
   }
   useEffect(() => {
-    getClients({ page: page + 1 })
+    getCompanies({ page: 1 }) // Just because API isn't support filtration
       .then(({ data }) => {
         console.log(data)
         if (!data.results) {
@@ -64,12 +69,12 @@ export function PageCustomerList() {
       .catch(({ data }) => {
         setOpen(true)
       })
-  }, [page])
+  }, [])
   const regions = useMemo(() => {
-    return Array.from(new Set(clients.map(c => c.region ?? '')))
+    return Array.from(new Set(clients.map(c => (c.region ?? '').trim()))).filter(r => r !== '')
   }, [clients])
   const types = useMemo(() => {
-    return Array.from(new Set(clients.map(c => c.type ?? '')))
+    return Array.from(new Set(clients.map(c => (c.type ?? '').trim()))).filter(r => r !== '')
   }, [clients])
   const filteredClients = useMemo(() => {
     let result = [...clients]
@@ -85,8 +90,8 @@ export function PageCustomerList() {
     if (filter.city !== '') {
       result = result.filter(c => c.city.includes(filter.city))
     }
-    return result
-  }, [clients, filter])
+    return result.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+  }, [clients, filter, page, rowsPerPage])
 
   return <>
     <AppBar color='inherit' position="static" className={styles.Root}>
@@ -156,16 +161,16 @@ export function PageCustomerList() {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[10]}
-                // colSpan={5}
+                rowsPerPageOptions={[5, 10, 25, { label: 'Все', value: -1 }]}
                 count={totalClients}
-                rowsPerPage={clients.length}
+                rowsPerPage={rowsPerPage}
                 page={page}
                 SelectProps={{
                   inputProps: { 'aria-label': 'Записей на странице' },
                   native: true,
                 }}
                 onChangePage={handleChangePage}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
               />
             </TableRow>
           </TableFooter>
