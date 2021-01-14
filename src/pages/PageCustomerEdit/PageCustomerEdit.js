@@ -31,8 +31,8 @@ function TabPanel({ children, value, index}) {
   return (
     <div role='tabpanel' hidden={value !== index}>
       {value === index && (
-        <Box paddingTop={3}>
-          <Typography>{children}</Typography>
+        <Box component='div' paddingTop={3}>
+          {children}
         </Box>
       )}
     </div>
@@ -61,6 +61,7 @@ const defaultValues = {
   'leader_position' : '',
   'registered_address' : '',
   'address' : '',
+  'tax_payer': false,
 }
 const defaultAlert = {
   open: false,
@@ -81,7 +82,15 @@ export function PageCustomerEdit() {
   }
   const [values, setValues] = useState(null)
   function onChangeField(e) {
-    setValues(data => ({...data, [e.target.name]: e.target.value}))
+    console.log(e.target.name, e.target.checked)
+    setValues(data => {
+      let val = e.target.value
+      const name = e.target.name
+      if (name === 'tax_payer') {
+        val = e.target.checked
+      }
+      return {...data, [name]: val}
+    })
   }
   useEffect(() => {
     getCompanyById(id)
@@ -336,11 +345,13 @@ export function PageCustomerEdit() {
                 </Grid>
                 <Grid item xs={12}>
                   <FormControlLabel
-                    value='left'
                     control={<Switch color='primary' />}
                     label='Плательщик НДС (нет/да)'
                     labelPlacement='start'
                     margin='dense'
+                    name='tax_payer'
+                    value={values.tax_payer}
+                    onChange={onChangeField}
                   />
                 </Grid>
               </Grid>

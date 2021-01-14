@@ -87,7 +87,6 @@ export function PageCustomerList() {
       } else {
         getCompanies({ page: 1 }) // Just because API isn't support filtration
           .then(({ data }) => {
-            console.log(data)
             if (!data.results) {
               setAlert({open: true, type: 'error', message: 'Не удалось загрузить список компаний'})
             }
@@ -122,7 +121,6 @@ export function PageCustomerList() {
   useEffect(() => {
     getCompanies({ page: 1 }) // Just because API isn't support filtration
       .then(({ data }) => {
-        console.log(data)
         if (!data.results) {
           setAlert({open: true, type: 'error', message: 'Не удалось загрузить список компаний'})
         }

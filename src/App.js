@@ -20,7 +20,6 @@ function App() {
   useEffect(() => {
     getMe()
       .then(({ data }) => {
-        console.log(data)
         setUser(data)
       })
       .catch(console.error)
