@@ -1,5 +1,5 @@
 import { httpClient } from '../httpClient'
 
-export function getClients() {
-    return httpClient.get('/clients/')
+export function getClients({ page }) {
+    return httpClient.get('/clients/', { params: { page } })
 }

@@ -37,34 +37,46 @@ const defaultFilter = {
     city: '',
   }
 export function PageCustomerList() {
+  const [totalClients, setTotalClients] = useState(0)
   const [clients, setClients] = useState([])
   const [filter, setFilter] = useState({...defaultFilter})
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
   function handleChangePage(event, newPage) {
     setPage(newPage);
   }
-  function handleChangeRowsPerPage(event) {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  }
-  const rowsView = useMemo(() => {
-    return clients.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  }, [page, rowsPerPage, clients])
+
   useEffect(() => {
-    getClients().then(({ data }) => {
+    getClients({ page: page + 1 }).then(({ data }) => {
       if (!data.results) {
         alert('Smth went wrong AHTUNG!')
       }
+      console.log(data)
       setClients(data.results)
+      setTotalClients(data.count)
     })
-  }, [])
+  }, [page])
   const regions = useMemo(() => {
     return Array.from(new Set(clients.map(c => c.region ?? '')))
   }, [clients])
   const types = useMemo(() => {
     return Array.from(new Set(clients.map(c => c.type ?? '')))
   }, [clients])
+  const filteredClients = useMemo(() => {
+    let result = [...clients]
+    if (filter.name !== '') {
+      result = result.filter(c => c.name.includes(filter.name))
+    }
+    if (filter.type !== '') {
+      result = result.filter(c => c.type === filter.type)
+    }
+    if (filter.region !== '') {
+      result = result.filter(c => c.region === filter.region)
+    }
+    if (filter.city !== '') {
+      result = result.filter(c => c.city.includes(filter.city))
+    }
+    return result
+  }, [clients, filter])
 
   return <>
     <AppBar color='inherit' position="static" className={styles.Root}>
@@ -118,12 +130,12 @@ export function PageCustomerList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rowsView.map(item => (
+            {filteredClients.map(item => (
               <TableRow key={item.id}>
                 <TableCell width='30%'>{item.name}</TableCell>
                 <TableCell width='10%'>{item.type || 'N/A'}</TableCell>
-                <TableCell>{item.region}</TableCell>
-                <TableCell>{item.city}</TableCell>
+                <TableCell>{item.region || 'N/A'}</TableCell>
+                <TableCell>{item.city || 'N/A'}</TableCell>
                 <TableCell width='10%' align="right">
                   <IconButton><MUIEdit/></IconButton>
                   <IconButton><MUIDelete/></IconButton>
@@ -134,17 +146,16 @@ export function PageCustomerList() {
           <TableFooter>
             <TableRow>
               <TablePagination
-                rowsPerPageOptions={[5, 10, 25, { label: 'Все', value: -1 }]}
+                rowsPerPageOptions={[10]}
                 // colSpan={5}
-                count={clients.length}
-                rowsPerPage={rowsPerPage}
+                count={totalClients}
+                rowsPerPage={clients.length}
                 page={page}
                 SelectProps={{
                   inputProps: { 'aria-label': 'Записей на странице' },
                   native: true,
                 }}
                 onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
               />
             </TableRow>
           </TableFooter>
