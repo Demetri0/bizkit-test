@@ -12,14 +12,10 @@ import {
     InputAdornment,
     IconButton,
 } from '@material-ui/core'
-import MuiAlert from '@material-ui/lab/Alert'
+import { Alert } from '../Alert'
 
 import Visibility from '@material-ui/icons/Visibility'
 import VisibilityOff from '@material-ui/icons/VisibilityOff'
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 export function LoginForm({ login }) {
     const [open, setOpen] = useState(false)

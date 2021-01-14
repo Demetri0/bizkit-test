@@ -20,11 +20,14 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Snackbar,
 } from '@material-ui/core'
 import MUIMenu from '@material-ui/icons/Menu'
 import MUIEdit from '@material-ui/icons/Edit'
 import MUIDelete from '@material-ui/icons/Delete'
 import MUIReplay from '@material-ui/icons/Replay'
+
+import { Alert } from '../../components/Alert'
 
 import { getClients } from '../../core/api/clients/getClients'
 
@@ -37,6 +40,7 @@ const defaultFilter = {
     city: '',
   }
 export function PageCustomerList() {
+  const [open, setOpen] = useState(false)
   const [totalClients, setTotalClients] = useState(0)
   const [clients, setClients] = useState([])
   const [filter, setFilter] = useState({...defaultFilter})
@@ -44,16 +48,22 @@ export function PageCustomerList() {
   function handleChangePage(event, newPage) {
     setPage(newPage);
   }
-
+  function handleClose() {
+    setOpen(false)
+  }
   useEffect(() => {
-    getClients({ page: page + 1 }).then(({ data }) => {
-      if (!data.results) {
-        alert('Smth went wrong AHTUNG!')
-      }
-      console.log(data)
-      setClients(data.results)
-      setTotalClients(data.count)
-    })
+    getClients({ page: page + 1 })
+      .then(({ data }) => {
+        console.log(data)
+        if (!data.results) {
+          setOpen(true)
+        }
+        setClients(data.results)
+        setTotalClients(data.count)
+      })
+      .catch(({ data }) => {
+        setOpen(true)
+      })
   }, [page])
   const regions = useMemo(() => {
     return Array.from(new Set(clients.map(c => c.region ?? '')))
@@ -163,5 +173,11 @@ export function PageCustomerList() {
       </TableContainer>
 
     </Paper>
+
+    <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Alert onClose={handleClose} severity="error">
+        Ошибка загрузки данных
+      </Alert>
+    </Snackbar>
   </>
 }
