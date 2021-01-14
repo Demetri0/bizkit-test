@@ -209,10 +209,10 @@ export function PageCustomerList() {
             {filteredClients.map(item => (
               <TableRow key={item.id}>
                 <TableCell width='30%'>{item.name}</TableCell>
-                <TableCell width='10%'>{item.type || 'N/A'}</TableCell>
+                <TableCell width='90'>{item.type || 'N/A'}</TableCell>
                 <TableCell>{item.region || 'N/A'}</TableCell>
                 <TableCell>{item.city || 'N/A'}</TableCell>
-                <TableCell width='10%' align="right">
+                <TableCell width='100' align="right">
                   <IconButton component={Link} to={`/company/${item.id}`}><MUIEdit/></IconButton>
                   <IconButton onClick={handleDelete(item.id)}><MUIDelete/></IconButton>
                 </TableCell>
