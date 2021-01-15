@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "/bizkit-test/static/css/main.a7deb3bb.chunk.css",
-    "main.js": "/bizkit-test/static/js/main.a7890e0e.chunk.js",
-    "main.js.map": "/bizkit-test/static/js/main.a7890e0e.chunk.js.map",
+    "main.js": "/bizkit-test/static/js/main.7b750fa9.chunk.js",
+    "main.js.map": "/bizkit-test/static/js/main.7b750fa9.chunk.js.map",
     "runtime-main.js": "/bizkit-test/static/js/runtime-main.8b6f228c.js",
     "runtime-main.js.map": "/bizkit-test/static/js/runtime-main.8b6f228c.js.map",
     "static/js/2.2f95d3f9.chunk.js": "/bizkit-test/static/js/2.2f95d3f9.chunk.js",
@@ -27,6 +27,6 @@
     "static/js/runtime-main.8b6f228c.js",
     "static/js/2.2f95d3f9.chunk.js",
     "static/css/main.a7deb3bb.chunk.css",
-    "static/js/main.a7890e0e.chunk.js"
+    "static/js/main.7b750fa9.chunk.js"
   ]
 }
